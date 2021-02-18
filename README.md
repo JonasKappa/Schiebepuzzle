@@ -1,4 +1,4 @@
 # KI Projekt Schiebepuzzle
 
-# Abstract
+## Abstract
 
