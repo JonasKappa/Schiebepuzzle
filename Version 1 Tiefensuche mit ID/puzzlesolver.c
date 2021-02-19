@@ -401,6 +401,7 @@ void AksenMain(void)
 {
     unsigned long time;
     unsigned char i;
+    unsigned char actionListLength = 0;
     lcd_puts("Start");
     clear_time();
     checkIfSolutionIsPossible();
@@ -455,22 +456,49 @@ void AksenMain(void)
 #ifndef PC
     time = akt_time();
     lcd_cls();
-    lcd_ulong(time);
-    lcd_puts("ms");
+    // ### UNCOMMENT TO GET OUTPUT WITH TIME ###
+    // lcd_ulong(time);
+    // lcd_puts("ms");
+    // lcd_setxy(1, 0);
+    // if (found)
+    // {
+    //     lcd_puts("Found: ");
+    //     lcd_int(getLengthOfActionList());
+    //     lcd_puts(" steps");
+    // }
+    // else if (!solutionIsPossible)
+    // {
+    //     lcd_puts("No solution");
+    // }
+    // else
+    // {
+    //     lcd_puts("Longer then steps");
+    // }
+    // #########################################
+    // ### COMMENT BLOCK TO DISABLE ACTION LIST OUTPUT ###
+    actionListLength = getLengthOfActionList();
+    for (i = 0; i < actionListLength; i++)
+    {
+        lcd_putchar(currentActionList[i]);
+        if (i == 15)
+        {
+            lcd_setxy(1, 0);
+        }
+    }
+    // ###################################################
 #endif
-    lcd_setxy(1, 0);
+#ifdef PC
+    printf("\n");
     if (found)
     {
         lcd_puts("Found: ");
         lcd_int(getLengthOfActionList());
         lcd_puts(" steps");
-#ifdef PC
         printf("\n");
         for (i = 0; i < getLengthOfActionList(); i++)
         {
             printf("%c", currentActionList[i]);
         }
-#endif
     }
     else if (!solutionIsPossible)
     {
@@ -480,6 +508,7 @@ void AksenMain(void)
     {
         lcd_puts("Longer then steps");
     }
+#endif
 #ifndef PC
     while (1)
         ;
