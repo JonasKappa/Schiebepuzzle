@@ -23,7 +23,6 @@
 
 #define CHAR 1
 #define INT 2
-#define BOOL 1
 #define LONG 2
 
 #ifdef MEM
