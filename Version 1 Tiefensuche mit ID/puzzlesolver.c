@@ -652,14 +652,25 @@ void AksenMain(void)
     // }
     // #########################################
     // ### COMMENT BLOCK TO DISABLE ACTION LIST OUTPUT ###
-    actionListLength = getLengthOfActionList();
-    for (i = 0; i < actionListLength; i++)
+    if (found)
     {
-        lcd_putchar(currentActionList[i]);
-        if (i == 15)
+        actionListLength = getLengthOfActionList();
+        for (i = 0; i < actionListLength; i++)
         {
-            lcd_setxy(1, 0);
+            lcd_putchar(currentActionList[i]);
+            if (i == 15)
+            {
+                lcd_setxy(1, 0);
+            }
         }
+    }
+    else if (!solutionIsPossible)
+    {
+        lcd_puts("No solution");
+    }
+    else
+    {
+        lcd_puts("Longer then steps");
     }
     // ###################################################
 #endif
