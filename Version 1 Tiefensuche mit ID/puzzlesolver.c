@@ -31,7 +31,6 @@ int maxMem = 0;
 
 void addMem(int n, int x)
 {
-    // printf("add ");
     memoryStack = memoryStack + (n * x);
     if (maxMem < memoryStack)
     {
@@ -41,7 +40,6 @@ void addMem(int n, int x)
 
 void remMem(int n, int x)
 {
-    // printf("rem ");
     memoryStack = memoryStack - (n * x);
     if (memoryStack < 0)
     {
