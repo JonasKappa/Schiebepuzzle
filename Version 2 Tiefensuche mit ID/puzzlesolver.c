@@ -1,3 +1,7 @@
+//Autor: J. Kappa
+//For running on PC: gcc -o ps puzzlesolver.c -D PC
+//For running on PC with memory calculation: gcc -o ps puzzlesolver.c -D PC -D MEM
+
 #include <stdbool.h>
 #include <stdlib.h>
 

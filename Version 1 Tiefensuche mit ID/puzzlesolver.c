@@ -1,7 +1,6 @@
 //Autor: J. Kappa
-//calculates the stack mem usage
-//only launch on PC with gcc -o ps puzzlesolverMem.c -D PC
-//but should work on AKSEN as well, but wont be showing the mem usage
+//For running on PC: gcc -o ps puzzlesolver.c -D PC
+//For running on PC with memory calculation: gcc -o ps puzzlesolver.c -D PC -D MEM
 
 //Standard-Include-Files
 #include <stdlib.h>
