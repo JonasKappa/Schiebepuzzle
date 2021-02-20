@@ -1,4 +1,7 @@
 //Autor: J. Kappa
+//calculates the stack mem usage
+//only launch on PC with gcc -o ps puzzlesolverMem.c -D PC
+//but should work on AKSEN as well, but wont be showing the mem usage
 
 //Standard-Include-Files
 #include <stdlib.h>
@@ -8,11 +11,45 @@
 #ifndef PC
 #include <stub.h>
 #endif
+#ifdef PC
+#include <stdio.h>
+#include <time.h>
+#endif
 
 #define MAX_DEPTH 30
 #define AGENDA_LENGTH 33
 #define PUZZLE_LENGTH 9
 #define DEPTH_ITERATOR 1
+
+#define CHAR 1
+#define INT 2
+#define BOOL 1
+#define LONG 2
+
+#ifdef MEM
+int memoryStack = 0;
+int maxMem = 0;
+
+void addMem(int n, int x)
+{
+    // printf("add ");
+    memoryStack = memoryStack + (n * x);
+    if (maxMem < memoryStack)
+    {
+        maxMem = memoryStack;
+    }
+}
+
+void remMem(int n, int x)
+{
+    // printf("rem ");
+    memoryStack = memoryStack - (n * x);
+    if (memoryStack < 0)
+    {
+        printf("memoryStack is less then 0!!!!");
+    }
+}
+#endif
 
 // variables for checking if a solution is possible
 int inversionNumberInitial = 0;
@@ -67,8 +104,6 @@ bool found = false;
 
 // mocking for AKSEN-Functions
 #ifdef PC
-#include <stdio.h>
-#include <time.h>
 // definitions for AKSEN functions
 void lcd_puts(const char *text)
 {
@@ -108,6 +143,10 @@ void init()
 {
     unsigned char i;
     unsigned char j;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(2, CHAR);
+#endif
     for (i = 0; i < AGENDA_LENGTH; i++)
     {
         for (j = 0; j < MAX_DEPTH; j++)
@@ -117,30 +156,52 @@ void init()
     }
     agendaPointer = 0;
     agendaPointerOverflow = false;
+#ifdef MEM
+    remMem(2, CHAR);
+    remMem(1, INT);
+#endif
 }
 
 // fills the current action list with the action list from the top of agenda
 void fillCurrentActionList()
 {
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(1, CHAR);
+#endif
     for (i = 0; i < MAX_DEPTH; i++)
     {
         currentActionList[i] = agenda[agendaPointer][i];
     }
+#ifdef MEM
+    remMem(1, CHAR);
+    remMem(1, INT);
+#endif
 }
 
 // calculates the x and y coordinate from the index
 int *getXYFromIndex(int index)
 {
     static int coordinates[2];
+#ifdef MEM
+    addMem(4, INT);
+#endif
     coordinates[0] = index % 3;
     coordinates[1] = floorf(index / 3);
+#ifdef MEM
+    remMem(4, INT);
+#endif
     return coordinates;
 }
 
 // calculates the index from x and y
 int getIndexFromXY(int x, int y)
 {
+#ifdef MEM
+    addMem(3, INT);
+    remMem(3, INT);
+#endif
     return 3 * y + x;
 }
 
@@ -154,6 +215,10 @@ char *calcPuzzle(char puzzle[PUZZLE_LENGTH], char action)
     int indexStart = -1;
     int *coordinates;
     int indexDest = -1;
+#ifdef MEM
+    addMem(6, INT);
+    addMem(3 + PUZZLE_LENGTH + PUZZLE_LENGTH, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         result[i] = puzzle[i];
@@ -188,6 +253,10 @@ char *calcPuzzle(char puzzle[PUZZLE_LENGTH], char action)
     }
     result[indexStart] = result[indexDest];
     result[indexDest] = 'o';
+#ifdef MEM
+    remMem(6, INT);
+    remMem(3 + PUZZLE_LENGTH + PUZZLE_LENGTH, CHAR);
+#endif
     return result;
 }
 
@@ -196,6 +265,10 @@ char *calcPuzzleFromInitWithActionList(char actionList[MAX_DEPTH])
 {
     static char calculatedPuzzle[PUZZLE_LENGTH];
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(MAX_DEPTH + PUZZLE_LENGTH + 1, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         calculatedPuzzle[i] = initialPuzzle[i];
@@ -213,6 +286,10 @@ char *calcPuzzleFromInitWithActionList(char actionList[MAX_DEPTH])
             }
         }
     }
+#ifdef MEM
+    remMem(1, INT);
+    remMem(MAX_DEPTH + PUZZLE_LENGTH + 1, CHAR);
+#endif
     return calculatedPuzzle;
 }
 
@@ -221,34 +298,62 @@ void calcAndSetCurrentPuzzle()
 {
     char *calculatedPuzzle = calcPuzzleFromInitWithActionList(currentActionList);
     unsigned char i;
+#ifdef MEM
+    addMem(2, INT);
+    addMem(1, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         currentPuzzle[i] = *(calculatedPuzzle + i);
     }
+#ifdef MEM
+    remMem(2, INT);
+    remMem(1, CHAR);
+#endif
 }
 
 // clears the current agenda and decreases the agendapointer by 1
 void clearCurrentAgenda()
 {
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(1, CHAR);
+#endif
     for (i = 0; i < MAX_DEPTH; i++)
     {
         agenda[agendaPointer][i] = 'o';
     }
     agendaPointer = agendaPointer - 1;
+#ifdef MEM
+    remMem(1, INT);
+    remMem(1, CHAR);
+#endif
 }
 
 // checks if the current puzzle state equals the finalPuzzle
 bool checkCurrentIsFinal()
 {
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(1, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         if (currentPuzzle[i] != finalPuzzle[i])
         {
+#ifdef MEM
+            remMem(1, INT);
+            remMem(1, CHAR);
+#endif
             return false;
         }
     }
+#ifdef MEM
+    remMem(1, INT);
+    remMem(1, CHAR);
+#endif
     return true;
 }
 
@@ -256,13 +361,25 @@ bool checkCurrentIsFinal()
 int getLengthOfActionList()
 {
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(1, CHAR);
+#endif
     for (i = 0; i < MAX_DEPTH; i++)
     {
         if (currentActionList[i] == 'o')
         {
+#ifdef MEM
+            remMem(1, INT);
+            remMem(1, CHAR);
+#endif
             return i;
         }
     }
+#ifdef MEM
+    remMem(1, INT);
+    remMem(1, CHAR);
+#endif
     return MAX_DEPTH;
 }
 
@@ -271,6 +388,10 @@ char *createChild(char action)
 {
     static char result[MAX_DEPTH];
     unsigned char i;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(2 + MAX_DEPTH, CHAR);
+#endif
     for (i = 0; i < MAX_DEPTH; i++)
     {
         result[i] = 'o';
@@ -287,6 +408,10 @@ char *createChild(char action)
             break;
         }
     }
+#ifdef MEM
+    remMem(1, INT);
+    remMem(2 + MAX_DEPTH, CHAR);
+#endif
     return result;
 }
 
@@ -295,9 +420,17 @@ bool createChildAndAddToAgenda(char action)
 {
     char *child;
     unsigned char i;
+#ifdef MEM
+    addMem(2, INT);
+    addMem(2, CHAR);
+#endif
     agendaPointer = agendaPointer + 1;
     if (agendaPointer >= AGENDA_LENGTH)
     {
+#ifdef MEM
+        remMem(2, INT);
+        remMem(2, CHAR);
+#endif
         return false;
     }
     child = createChild(action);
@@ -305,6 +438,10 @@ bool createChildAndAddToAgenda(char action)
     {
         agenda[agendaPointer][i] = *(child + i);
     }
+#ifdef MEM
+    remMem(2, INT);
+    remMem(2, CHAR);
+#endif
     return true;
 }
 
@@ -317,6 +454,10 @@ bool calcChildrenAndAddToAgenda()
     int lastIndex = 0;
     char lastMove = 'x';
     int *coordinates;
+#ifdef MEM
+    addMem(5, INT);
+    addMem(3, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         if (currentPuzzle[i] == 'o')
@@ -338,6 +479,10 @@ bool calcChildrenAndAddToAgenda()
     { // movement to the right is possible
         if (!createChildAndAddToAgenda('r'))
         {
+#ifdef MEM
+            remMem(5, INT);
+            remMem(3, CHAR);
+#endif
             return false;
         }
     }
@@ -345,6 +490,10 @@ bool calcChildrenAndAddToAgenda()
     { // movement to the left is possible
         if (!createChildAndAddToAgenda('l'))
         {
+#ifdef MEM
+            remMem(5, INT);
+            remMem(3, CHAR);
+#endif
             return false;
         }
     }
@@ -352,6 +501,10 @@ bool calcChildrenAndAddToAgenda()
     { // movement down is possible
         if (!createChildAndAddToAgenda('d'))
         {
+#ifdef MEM
+            remMem(5, INT);
+            remMem(3, CHAR);
+#endif
             return false;
         }
     }
@@ -359,9 +512,17 @@ bool calcChildrenAndAddToAgenda()
     { // movement up is possible
         if (!createChildAndAddToAgenda('u'))
         {
+#ifdef MEM
+            remMem(5, INT);
+            remMem(3, CHAR);
+#endif
             return false;
         }
     }
+#ifdef MEM
+    remMem(5, INT);
+    remMem(3, CHAR);
+#endif
     return true; // successfully executed function
 }
 
@@ -370,6 +531,10 @@ void checkIfSolutionIsPossible()
 {
     unsigned char i;
     unsigned char j;
+#ifdef MEM
+    addMem(1, INT);
+    addMem(2, CHAR);
+#endif
     for (i = 0; i < PUZZLE_LENGTH; i++)
     {
         if (initialPuzzle[i] != 'o')
@@ -395,6 +560,10 @@ void checkIfSolutionIsPossible()
     }
 
     solutionIsPossible = inversionNumberInitial % 2 == inversionNumberFinal % 2;
+#ifdef MEM
+    remMem(1, INT);
+    remMem(2, CHAR);
+#endif
 }
 
 void AksenMain(void)
@@ -402,6 +571,10 @@ void AksenMain(void)
     unsigned long time;
     unsigned char i;
     unsigned char actionListLength = 0;
+#ifdef MEM
+    addMem(1, LONG);
+    addMem(2, CHAR);
+#endif
     lcd_puts("Start");
     clear_time();
     checkIfSolutionIsPossible();
@@ -453,6 +626,10 @@ void AksenMain(void)
             }
         }
     }
+#ifdef MEM
+    remMem(1, LONG);
+    remMem(2, CHAR);
+#endif
 #ifndef PC
     time = akt_time();
     lcd_cls();
@@ -508,6 +685,10 @@ void AksenMain(void)
     {
         lcd_puts("Longer then steps");
     }
+#ifdef MEM
+    printf("\n");
+    printf("max memory usage: %d Byte", maxMem);
+#endif
 #endif
 #ifndef PC
     while (1)
