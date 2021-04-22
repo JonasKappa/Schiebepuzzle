@@ -8,4 +8,4 @@ Dieses Projekt beschäftigt sich mit der Lösung des Achterschiebepuzzles auf de
 
 Unter folgendem Link kann eine ZIP des Projektes heruntergeladen werden:
 
-https://github.com/TrueRushHunt3r/Schiebepuzzle/releases/tag/Abgabe
+https://github.com/JonasKappa/Schiebepuzzle/releases/tag/Abgabe
